@@ -14,9 +14,9 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	client, err := pkg.ConnectToRPC()
+	balance, err := pkg.GetBalance("0xC4bFccB1668d6E464F33a76baDD8C8D7D341e04A")
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
-	fmt.Println(client)
+	fmt.Println(balance, "ETH")
 }

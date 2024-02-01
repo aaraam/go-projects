@@ -31,6 +31,6 @@ func GetBalance(address string) (*big.Int, error) {
 		return nil, err
 	}
 	// convert balance to ether
-	balance = balance.Div(balance, big.NewInt(1000000000000000000))
+	// balance = balance.Div(balance, big.NewInt(1000000000000000000))
 	return balance, nil
 }

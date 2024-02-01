@@ -97,3 +97,36 @@ func (uc UserController) DeleteUser(w http.ResponseWriter, r *http.Request, p ht
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "Deleted user %s\n", oid.Hex())
 }
+
+// function to update user details with id
+func (uc UserController) UpdateUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	id := p.ByName("id")
+
+	oid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	u := models.User{}
+	json.NewDecoder(r.Body).Decode(&u)
+	collection := uc.client.Database("mongo-golang").Collection("users")
+	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+
+	_, err = collection.UpdateOne(ctx, bson.M{"_id": oid}, bson.M{"$set": u})
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	uj, err := json.Marshal(u)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "%s\n", uj)
+}

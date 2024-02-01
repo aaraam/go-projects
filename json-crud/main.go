@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/julienschmidt/httprouter"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -15,6 +17,12 @@ import (
 
 func main() {
 	r := httprouter.New()
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	client, err := getSession()
 	if err != nil {
 		log.Fatal(err)
@@ -23,13 +31,15 @@ func main() {
 	r.GET("/user/:id", uc.GetUser)
 	r.POST("/user", uc.CreateUser)
 	r.DELETE("/user/:id", uc.DeleteUser)
+	r.PUT("/user/:id", uc.UpdateUser)
 
 	fmt.Println("Server started at port 8080")
 	log.Fatal(http.ListenAndServe("localhost:8080", r))
 }
 
 func getSession() (*mongo.Client, error) {
-	clientOptions := options.Client().ApplyURI("mongodb+srv://zinu:bingo123@goblin.nlveh.mongodb.net")
+	uri := os.Getenv("MONGO_URI")
+	clientOptions := options.Client().ApplyURI(uri)
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 	if err != nil {
 		return nil, err

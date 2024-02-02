@@ -12,7 +12,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-// go function to connect to rpc
+// function to connect to rpc
 func ConnectToRPC() (*ethclient.Client, error) {
 	uri := os.Getenv("RPC_URL")
 	client, err := ethclient.Dial(uri)
@@ -23,7 +23,7 @@ func ConnectToRPC() (*ethclient.Client, error) {
 	return client, nil
 }
 
-// go function to get balances
+// function to get balances
 func GetBalance(address string) (*big.Int, error) {
 	client, err := ConnectToRPC()
 	if err != nil {
@@ -38,6 +38,7 @@ func GetBalance(address string) (*big.Int, error) {
 	return balance, nil
 }
 
+// function to send transactions
 func SendTransaction(fromPrivKey string, toAddress string, amount *big.Int) (string, error) {
 	client, err := ConnectToRPC()
 	if err != nil {
